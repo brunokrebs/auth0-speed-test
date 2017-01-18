@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Speed Test - comparing JSON and ProtoBuf speed</title>
+
+    <!-- Bootstrap -->
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<div class="container" ng-app="speed-test-app">
+    <div class="row" ng-controller="SpeedTestController as ctrl">
+        <div class="col-xs-12">
+            <h1>Speed Test - comparing JSON and ProtoBuf speed</h1>
+            <p>
+                The following buttons will request a bunch of data from the server and show how fast they go. Both
+                return exactly the same data, but with different protocols.
+            </p>
+            <div class="row">
+                <div class="col-xs-12 col-sm-6">
+                    <button class="btn btn-primary" ng-click="ctrl.protoBufRequest()">ProtoBuf request</button>
+                </div>
+                <div class="col-xs-12 col-sm-6">
+                    <button class="btn btn-success" ng-click="ctrl.jsonRequest()">JSON request</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.6.1/angular.min.js"></script>
+<script>
+    (function() {
+        angular.module("speed-test-app", [])
+            .controller("SpeedTestController", function() {
+                let ctrl = this;
+
+                ctrl.protoBufRequest = function() {
+                    console.log('ProtoBuf request');
+                };
+
+                ctrl.jsonRequest = function() {
+                    console.log('JSON Request');
+                };
+            });
+    }());
+</script>
+</body>
+</html>
