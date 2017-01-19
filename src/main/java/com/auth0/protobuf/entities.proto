@@ -1,0 +1,16 @@
+package demo;
+
+option java_package = "com.auth0.protobuf";
+
+message Address {
+    required string street = 1;
+    required int32 number = 2;
+}
+
+message Person {
+    required string name = 1;
+    required int32 age = 2;
+    required int32 height = 3;
+    required int32 weight = 4;
+    required Address address = 5;
+}
