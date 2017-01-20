@@ -26,11 +26,23 @@
                     <button class="btn btn-success" ng-click="ctrl.jsonRequest()">JSON request</button>
                 </div>
             </div>
+            <div class="row">
+                <div class="col-xs-12">
+                    <table class="table">
+                        <tr ng-repeat="people in ctrl.people">
+                            <td>{{people.name}}</td>
+                            <td>{{people.email[0]}}</td>
+                            <td>{{people.mobile[0]}}</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
         </div>
     </div>
 </div>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.6.1/angular.min.js"></script>
-<script src="https://cdn.rawgit.com/dcodeIO/protobuf.js/6.5.3/dist/protobuf.js"></script>
+<script src="https://cdn.rawgit.com/dcodeIO/protobuf.js/6.5.3/dist/protobuf.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.6.1/angular.min.js"></script>
+<script src="bundle.js"></script>
 <script>
     (function() {
         const peopleEndpoint = '/people';
@@ -40,6 +52,7 @@
         angular.module("speed-test-app", [])
             .controller("SpeedTestController", function($http) {
                 let ctrl = this;
+                ctrl.people = [];
 
                 ctrl.protoBufRequest = function() {
                     var req = {
@@ -48,16 +61,20 @@
                         responseType: protobufResp,
                         url: `/protobuf/${peopleEndpoint}`
                     };
-                    $http(req).then(function(data) {
-                        console.log(data);
+                    $http(req).then(function(response) {
+                        console.log(response);
+                        console.log(response.data);
+                        console.log(typeof response.data);
+                        console.log(response.data.byteLength);
+                        ctrl.people = protobuf.roots.default.demo.People.decode(new Uint8Array(response.data)).person;
                     }, function(err) {
                         console.log(err);
                     });
                 };
 
                 ctrl.jsonRequest = function() {
-                    $http.get(`/json/${peopleEndpoint}`).then(function(data) {
-                        console.log(data);
+                    $http.get(`/json/${peopleEndpoint}`).then(function(response) {
+                        ctrl.people = response.data.person;
                     }, function(err) {
                         console.log(err);
                     });

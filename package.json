@@ -1,0 +1,25 @@
+{
+  "name": "protobuf",
+  "version": "1.0.0",
+  "description": "## Generating protobuf files",
+  "main": "index.js",
+  "dependencies": {
+    "protobufjs": "^6.5.3"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "protobuf": "pbjs -t static-module -w commonjs -o ./src/main/resources/static/people.js ./src/main/resources/people.proto",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/brunokrebs/auth0-speed-test.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/brunokrebs/auth0-speed-test/issues"
+  },
+  "homepage": "https://github.com/brunokrebs/auth0-speed-test#readme"
+}
