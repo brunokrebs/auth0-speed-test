@@ -1,4 +1,4 @@
-# Protobuf / JSON speed comparison
+# Protobuf / JSON comparison
 
 ## Test sample
 
