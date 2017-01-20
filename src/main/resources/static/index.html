@@ -19,22 +19,11 @@
                 return exactly the same data, but with different protocols.
             </p>
             <div class="row">
-                <div class="col-xs-12 col-sm-6">
-                    <button class="btn btn-primary" ng-click="ctrl.protoBufRequest()">ProtoBuf request</button>
+                <div class="col-xs-6 col-sm-2">
+                    <button class="btn btn-primary btn-block" ng-click="ctrl.requestProtobuf()">15x - ProtoBuf request</button>
                 </div>
-                <div class="col-xs-12 col-sm-6">
-                    <button class="btn btn-success" ng-click="ctrl.jsonRequest()">JSON request</button>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-xs-12">
-                    <table class="table">
-                        <tr ng-repeat="people in ctrl.people">
-                            <td>{{people.name}}</td>
-                            <td>{{people.email[0]}}</td>
-                            <td>{{people.mobile[0]}}</td>
-                        </tr>
-                    </table>
+                <div class="col-xs-6 col-sm-2">
+                    <button class="btn btn-success btn-block" ng-click="ctrl.requestJson()">15x - JSON request</button>
                 </div>
             </div>
         </div>
@@ -53,32 +42,43 @@
             .controller("SpeedTestController", function($http) {
                 let ctrl = this;
                 ctrl.people = [];
+                ctrl.time = [];
 
-                ctrl.protoBufRequest = function() {
-                    var req = {
+                ctrl.requestProtobuf = protobuRequest;
+                ctrl.requestJson = jsonRequest;
+
+                function protobuRequest() {
+                    let startTime = Date.now();
+                    let req = {
                         accept: octetStream,
                         method: 'GET',
                         responseType: protobufResp,
                         url: `/protobuf/${peopleEndpoint}`
                     };
-                    $http(req).then(function(response) {
-                        console.log(response);
-                        console.log(response.data);
-                        console.log(typeof response.data);
-                        console.log(response.data.byteLength);
+                    return $http(req).then(function(response) {
                         ctrl.people = protobuf.roots.default.demo.People.decode(new Uint8Array(response.data)).person;
-                    }, function(err) {
-                        console.log(err);
+                        recordTime(Date.now() - startTime, protobuRequest);
                     });
-                };
+                }
 
-                ctrl.jsonRequest = function() {
+                function jsonRequest() {
+                    let startTime = Date.now();
                     $http.get(`/json/${peopleEndpoint}`).then(function(response) {
                         ctrl.people = response.data.person;
-                    }, function(err) {
-                        console.log(err);
+                        recordTime(Date.now() - startTime, jsonRequest);
                     });
-                };
+                }
+
+                function recordTime(time, callback) {
+                    ctrl.time.push(time);
+                    if (ctrl.time.length < 15) {
+                        return callback();
+                    }
+                    let totalTime = 0;
+                    ctrl.time.forEach(time => totalTime += time);
+                    console.log(`It took a average of ${totalTime / ctrl.time.length}ms to handle the request and response.`);
+                    ctrl.time = [];
+                }
             });
     }());
 </script>
