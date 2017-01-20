@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+package demo;
+
+option java_package = "com.auth0.protobuf";
+
+message People {
+    repeated Person person = 1;
+}
+
+message Person {
+    string name = 1;
+    repeated Address address = 2;
+    repeated string mobile = 3;
+    repeated string email = 4;
+}
+
+message Address {
+    string street = 1;
+    int32 number = 2;
+}

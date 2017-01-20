@@ -30,18 +30,37 @@
     </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.6.1/angular.min.js"></script>
+<script src="https://cdn.rawgit.com/dcodeIO/protobuf.js/6.5.3/dist/protobuf.js"></script>
 <script>
     (function() {
+        const peopleEndpoint = '/people';
+        const protobufResp = 'arraybuffer';
+        const octetStream = 'binary/octet-stream';
+
         angular.module("speed-test-app", [])
-            .controller("SpeedTestController", function() {
+            .controller("SpeedTestController", function($http) {
                 let ctrl = this;
 
                 ctrl.protoBufRequest = function() {
-                    console.log('ProtoBuf request');
+                    var req = {
+                        accept: octetStream,
+                        method: 'GET',
+                        responseType: protobufResp,
+                        url: `/protobuf/${peopleEndpoint}`
+                    };
+                    $http(req).then(function(data) {
+                        console.log(data);
+                    }, function(err) {
+                        console.log(err);
+                    });
                 };
 
                 ctrl.jsonRequest = function() {
-                    console.log('JSON Request');
+                    $http.get(`/json/${peopleEndpoint}`).then(function(data) {
+                        console.log(data);
+                    }, function(err) {
+                        console.log(err);
+                    });
                 };
             });
     }());
