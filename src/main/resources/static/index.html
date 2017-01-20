@@ -19,11 +19,14 @@
                 return exactly the same data, but with different protocols.
             </p>
             <div class="row">
-                <div class="col-xs-6 col-sm-2">
+                <div class="col-xs-4 col-sm-2">
                     <button class="btn btn-primary btn-block" ng-click="ctrl.requestProtobuf()">15x - ProtoBuf request</button>
                 </div>
-                <div class="col-xs-6 col-sm-2">
+                <div class="col-xs-4 col-sm-2">
                     <button class="btn btn-success btn-block" ng-click="ctrl.requestJson()">15x - JSON request</button>
+                </div>
+                <div class="col-xs-4 col-sm-2">
+                    <button class="btn btn-info btn-block" ng-click="ctrl.requestProtobufJava()">Java</button>
                 </div>
             </div>
         </div>
@@ -44,8 +47,16 @@
                 ctrl.people = [];
                 ctrl.time = [];
 
+                ctrl.requestProtobufJava = requestProtobufJava;
                 ctrl.requestProtobuf = protobuRequest;
                 ctrl.requestJson = jsonRequest;
+
+                function requestProtobufJava() {
+                    let startTime = Date.now();
+                    $http.get(`/protobuf/java`).then(function() {
+                        console.log("done");
+                    });
+                }
 
                 function protobuRequest() {
                     let startTime = Date.now();
