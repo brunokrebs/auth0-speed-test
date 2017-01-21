@@ -1,7 +1,7 @@
 package com.auth0;
 
-import com.auth0.protobuf.PeopleOuterClass;
 import com.auth0.protobuf.PeopleOuterClass.People;
+import com.google.protobuf.InvalidProtocolBufferException;
 import com.google.protobuf.util.JsonFormat;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
@@ -27,16 +27,36 @@ public class ProtobufEndpoint {
 
     @RequestMapping(path = "/protobuf/java", method= RequestMethod.GET)
     public void getProtobufJava() throws UnirestException, IOException {
+        getProtobuf(); // heating the engines
+        getJson(); // heating the engines
+
+        long protobufTimes = 0;
+        long jsonTimes = 0;
+
+        for (int i = 0; i < 40; i++) {
+            protobufTimes += getProtobuf();
+            jsonTimes += getJson();
+        }
+        System.out.println("It took an avarage of " + (protobufTimes / 40) + "ms to load with protobuf.");
+        System.out.println("It took an avarage of " + (jsonTimes / 40) + "ms to load with json.");
+    }
+
+    private long getProtobuf() throws UnirestException, IOException {
         long start = (new Date()).getTime();
         People people = People.parseFrom(Unirest.get("http://localhost:8080/protobuf/people").asBinary().getRawBody());
-        System.out.println(people.getPersonList().size());
         long time = (new Date()).getTime() - start;
-        System.out.println("It took " + time + "ms to load with protobuf.");
+        System.out.println("protobuf took " + time + "ms to load " + people.getPersonList().size() + " people.");
+        return time;
+    }
 
-        start = (new Date()).getTime();
-        JsonFormat.parser().merge(Unirest.get("http://localhost:8080/json/people").asString().getBody(), People.newBuilder());
-        System.out.println(people.getPersonList().size());
-        time = (new Date()).getTime() - start;
-        System.out.println("It took " + time + "ms to load with json.");
+    private long getJson() throws UnirestException, InvalidProtocolBufferException {
+        long start = (new Date()).getTime();
+        People.Builder people = People.newBuilder();
+        JsonFormat.parser()
+                .merge(Unirest.get("http://localhost:8080/json/people")
+                        .asString().getBody(), people);
+        long time = (new Date()).getTime() - start;
+        System.out.println("json took " + time + "ms to load " + people.getPersonList().size() + " people.");
+        return time;
     }
 }
