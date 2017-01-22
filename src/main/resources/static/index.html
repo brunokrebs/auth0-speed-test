@@ -29,6 +29,11 @@
                     <button class="btn btn-info btn-block" ng-click="ctrl.requestProtobufJava()">Java</button>
                 </div>
             </div>
+            <div class="row">
+                <div class="col-xs-4 col-sm-2">
+                    <button class="btn btn-primary btn-block" ng-click="ctrl.postProtobuf()">Post ProtoBuf</button>
+                </div>
+            </div>
         </div>
     </div>
 </div>
@@ -37,12 +42,15 @@
 <script src="bundle.js"></script>
 <script>
     (function() {
+        const People = protobuf.roots.default.demo.People;
+        const Person = protobuf.roots.default.demo.Person;
+        const Address = protobuf.roots.default.demo.Address;
         const peopleEndpoint = '/people';
         const protobufResp = 'arraybuffer';
         const octetStream = 'binary/octet-stream';
 
-        angular.module("speed-test-app", [])
-            .controller("SpeedTestController", function($http) {
+        angular.module('speed-test-app', [])
+            .controller('SpeedTestController', function($http) {
                 let ctrl = this;
                 ctrl.people = [];
                 ctrl.time = [];
@@ -50,11 +58,49 @@
                 ctrl.requestProtobufJava = requestProtobufJava;
                 ctrl.requestProtobuf = protobuRequest;
                 ctrl.requestJson = jsonRequest;
+                ctrl.postProtobuf = postProtobuf;
 
                 function requestProtobufJava() {
-                    let startTime = Date.now();
                     $http.get(`/protobuf/java`).then(function() {
-                        console.log("done");
+                        console.log('done');
+                    });
+                }
+
+                function postProtobuf() {
+                    let startTime = Date.now();
+                    let address = new Address({
+                        street: 'Street',
+                        number: 100
+                    });
+
+                    let jsonPerson = {
+                        name: 'Some person',
+                        address: [],
+                        mobile: [],
+                        email: []
+                    };
+
+                    for (let i = 0; i < 3; i++) jsonPerson.address.push(address);
+                    for (let i = 0; i < 3; i++) jsonPerson.mobile.push('(1) 732-757-2923');
+                    for (let i = 0; i < 3; i++) jsonPerson.email.push('someone@somewhere.com');
+
+                    let person = new Person(jsonPerson);
+                    let people = new People({
+                        person: [person]
+                    });
+
+                    let post = {
+                        method: 'POST',
+                        url: '/protobuf/people',
+                        data: People.encode(people).finish(),
+                        transformRequest: [],
+                        headers: {
+                            'Content-Type': 'application/x-protobuf'
+                        }
+                    };
+
+                    return $http(post).then(function() {
+                        recordTime(Date.now() - startTime, postProtobuf);
                     });
                 }
 
@@ -67,7 +113,7 @@
                         url: `/protobuf/${peopleEndpoint}`
                     };
                     return $http(req).then(function(response) {
-                        ctrl.people = protobuf.roots.default.demo.People.decode(new Uint8Array(response.data)).person;
+                        ctrl.people = People.decode(new Uint8Array(response.data)).person;
                         recordTime(Date.now() - startTime, protobuRequest);
                     });
                 }
@@ -82,7 +128,7 @@
 
                 function recordTime(time, callback) {
                     ctrl.time.push(time);
-                    if (ctrl.time.length < 15) {
+                    if (ctrl.time.length < 50) {
                         return callback();
                     }
                     let totalTime = 0;

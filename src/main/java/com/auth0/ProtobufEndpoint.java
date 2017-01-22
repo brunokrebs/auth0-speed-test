@@ -5,6 +5,7 @@ import com.google.protobuf.InvalidProtocolBufferException;
 import com.google.protobuf.util.JsonFormat;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -18,6 +19,11 @@ public class ProtobufEndpoint {
     @RequestMapping(path = "/protobuf/people", method= RequestMethod.GET, produces = "application/x-protobuf")
     public People getPeopleProtobuf() {
         return SpeedTestApp.getPeople();
+    }
+
+    @RequestMapping(path = "/protobuf/people", method= RequestMethod.POST, consumes = "application/x-protobuf")
+    public void postPeopleProtobuf(@RequestBody People people) {
+        System.out.println(people.getPersonList().get(0).getName());
     }
 
     @RequestMapping(path = "/json/people", method= RequestMethod.GET, produces = "application/json")
