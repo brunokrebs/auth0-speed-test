@@ -33,6 +33,9 @@
                 <div class="col-xs-4 col-sm-2">
                     <button class="btn btn-primary btn-block" ng-click="ctrl.postProtobuf()">Post ProtoBuf</button>
                 </div>
+                <div class="col-xs-4 col-sm-2">
+                    <button class="btn btn-success btn-block" ng-click="ctrl.postJSON()">Post JSON</button>
+                </div>
             </div>
         </div>
     </div>
@@ -59,10 +62,39 @@
                 ctrl.requestProtobuf = protobuRequest;
                 ctrl.requestJson = jsonRequest;
                 ctrl.postProtobuf = postProtobuf;
+                ctrl.postJSON = postJSON;
 
                 function requestProtobufJava() {
                     $http.get(`/protobuf/java`).then(function() {
                         console.log('done');
+                    });
+                }
+
+                function postJSON() {
+                    let startTime = Date.now();
+                    let address = new Address({
+                        street: 'Street',
+                        number: 100
+                    });
+
+                    let jsonPerson = {
+                        name: 'Some person',
+                        address: [],
+                        mobile: [],
+                        email: []
+                    };
+
+                    for (let i = 0; i < 3; i++) jsonPerson.address.push(address);
+                    for (let i = 0; i < 3; i++) jsonPerson.mobile.push('(1) 732-757-2923');
+                    for (let i = 0; i < 3; i++) jsonPerson.email.push('someone@somewhere.com');
+
+                    let person = new Person(jsonPerson);
+                    let people = new People({
+                        person: [person]
+                    });
+
+                    return $http.post('/json/people', people).then(function() {
+                        recordTime(Date.now() - startTime, postProtobuf);
                     });
                 }
 

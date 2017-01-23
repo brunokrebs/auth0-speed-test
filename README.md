@@ -15,6 +15,8 @@ On a gzipped environment, protobuf payload was only 10% smaller, but on a non-gi
 
 ## Front-end communicating with Java backend results
 
+### Deserialize (GET) from server
+
 The following results were extracted from executing 15 requests per protocol on the test sample.
 
 |          | gzipped time (avg) | non-gzipped time (avg) |
@@ -25,6 +27,17 @@ The following results were extracted from executing 15 requests per protocol on 
 As we can see, when issuing requests from a JavaScript front-end app with protobuf.js it took us 72% of the time that 
 it took on a json request. On a non-gzipped environment we were able to handle it even faster, it took only 49% of the 
 time to handle a protobuf response compared to a json response.
+
+### Serialize (POSt) to server
+
+The following results were extracted from executing 100 thousand post requests, per protocol, to the backend. 
+
+|          | avg ms / POST |
+|----------|---------------|
+| protobuf |   3.19527ms   |
+| json     |   3.31738ms   |
+
+The results were quite similar. Protobuf post requests took only 4% less time than JSON post requests.
 
 ## Two Java backends communicating results
 

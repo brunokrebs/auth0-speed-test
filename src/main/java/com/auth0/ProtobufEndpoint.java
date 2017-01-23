@@ -26,10 +26,16 @@ public class ProtobufEndpoint {
         System.out.println(people.getPersonList().get(0).getName());
     }
 
+    @RequestMapping(path = "/json/people", method= RequestMethod.POST, consumes = "application/json")
+    public void postPeopleJson(@RequestBody People people) {
+        System.out.println(people.getPersonList().get(0).getName());
+    }
+
     @RequestMapping(path = "/json/people", method= RequestMethod.GET, produces = "application/json")
     public People getPeopleJSON() {
         return SpeedTestApp.getPeople();
     }
+
 
     @RequestMapping(path = "/protobuf/java", method= RequestMethod.GET)
     public void getProtobufJava() throws UnirestException, IOException {
