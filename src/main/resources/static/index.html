@@ -51,6 +51,7 @@
         const peopleEndpoint = '/people';
         const protobufResp = 'arraybuffer';
         const octetStream = 'binary/octet-stream';
+        const NUMBER_OF_CALLS = 50;
 
         angular.module('speed-test-app', [])
             .controller('SpeedTestController', function($http) {
@@ -94,7 +95,7 @@
                     });
 
                     return $http.post('/json/people', people).then(function() {
-                        recordTime(Date.now() - startTime, postProtobuf);
+                        recordTime(Date.now() - startTime, postJSON);
                     });
                 }
 
@@ -160,12 +161,16 @@
 
                 function recordTime(time, callback) {
                     ctrl.time.push(time);
-                    if (ctrl.time.length < 50) {
+                    if (ctrl.time.length < NUMBER_OF_CALLS) {
                         return callback();
                     }
                     let totalTime = 0;
-                    ctrl.time.forEach(time => totalTime += time);
-                    console.log(`It took a average of ${totalTime / ctrl.time.length}ms to handle the request and response.`);
+                    ctrl.time.forEach(time => {
+                        let previousTime = totalTime;
+                        totalTime += time;
+                        console.log(`${totalTime} = ${totalTime} + ${time}`);
+                    });
+                    console.log(`Took ${totalTime / NUMBER_OF_CALLS}ms to handle the request and response.`);
                     ctrl.time = [];
                 }
             });

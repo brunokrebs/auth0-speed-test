@@ -19,10 +19,17 @@ On a gzipped environment, protobuf payload was only 10% smaller, but on a non-gi
 
 The following results were extracted from executing 15 requests per protocol on the test sample.
 
+SpiderMonkey:
 |          | gzipped time (avg) | non-gzipped time (avg) |
 |----------|--------------|------------------|
-| protobuf |     575ms    |       460ms      |
-| json     |     790ms    |       921ms      |
+| protobuf |     ms    |       620ms      |
+| json     |     ms    |       583ms      |
+
+V8:
+|          | gzipped time (avg) | non-gzipped time (avg) |
+|----------|--------------|------------------|
+| protobuf |     ms    |       524ms      |
+| json     |     ms    |       761ms      |
 
 As we can see, when issuing requests from a JavaScript front-end app with protobuf.js it took us 72% of the time that 
 it took on a json request. On a non-gzipped environment we were able to handle it even faster, it took only 49% of the 

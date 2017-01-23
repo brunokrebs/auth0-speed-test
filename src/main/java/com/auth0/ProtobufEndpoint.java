@@ -15,6 +15,7 @@ import java.util.Date;
 
 @RestController
 public class ProtobufEndpoint {
+    private static final int NUMBER_OF_RUNS = 500;
 
     @RequestMapping(path = "/protobuf/people", method= RequestMethod.GET, produces = "application/x-protobuf")
     public People getPeopleProtobuf() {
@@ -38,24 +39,28 @@ public class ProtobufEndpoint {
 
 
     @RequestMapping(path = "/protobuf/java", method= RequestMethod.GET)
-    public void getProtobufJava() throws UnirestException, IOException {
+    public Response getProtobufJava() throws UnirestException, IOException {
         getProtobuf(); // heating the engines
         getJson(); // heating the engines
 
         long protobufTimes = 0;
         long jsonTimes = 0;
 
-        for (int i = 0; i < 40; i++) {
+        for (int i = 0; i < NUMBER_OF_RUNS; i++) {
             protobufTimes += getProtobuf();
             jsonTimes += getJson();
         }
-        System.out.println("It took an avarage of " + (protobufTimes / 40) + "ms to load with protobuf.");
-        System.out.println("It took an avarage of " + (jsonTimes / 40) + "ms to load with json.");
+        long totalProtobuf = protobufTimes / NUMBER_OF_RUNS;
+        long totalJson = jsonTimes / NUMBER_OF_RUNS;
+        System.out.println("It took an avarage of " + totalProtobuf + "ms to load with protobuf.");
+        System.out.println("It took an avarage of " + totalJson + "ms to load with json.");
+
+        return new Response(totalProtobuf, totalJson);
     }
 
     private long getProtobuf() throws UnirestException, IOException {
         long start = (new Date()).getTime();
-        People people = People.parseFrom(Unirest.get("http://localhost:8080/protobuf/people").asBinary().getRawBody());
+        People people = People.parseFrom(Unirest.get("http://138.197.206.170:8080/protobuf/people").asBinary().getRawBody());
         long time = (new Date()).getTime() - start;
         System.out.println("protobuf took " + time + "ms to load " + people.getPersonList().size() + " people.");
         return time;
@@ -65,10 +70,28 @@ public class ProtobufEndpoint {
         long start = (new Date()).getTime();
         People.Builder people = People.newBuilder();
         JsonFormat.parser()
-                .merge(Unirest.get("http://localhost:8080/json/people")
+                .merge(Unirest.get("http://138.197.206.170:8080/json/people")
                         .asString().getBody(), people);
         long time = (new Date()).getTime() - start;
         System.out.println("json took " + time + "ms to load " + people.getPersonList().size() + " people.");
         return time;
+    }
+}
+
+class Response {
+    private long protobufAverage;
+    private long jsonAverage;
+
+    public Response(long protobufAverage, long jsonAverage) {
+        this.protobufAverage = protobufAverage;
+        this.jsonAverage = jsonAverage;
+    }
+
+    public long getProtobufAverage() {
+        return protobufAverage;
+    }
+
+    public long getJsonAverage() {
+        return jsonAverage;
     }
 }
