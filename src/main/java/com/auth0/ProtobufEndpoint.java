@@ -60,7 +60,7 @@ public class ProtobufEndpoint {
 
     private long getProtobuf() throws UnirestException, IOException {
         long start = (new Date()).getTime();
-        People people = People.parseFrom(Unirest.get("http://138.197.206.170:8080/protobuf/people").asBinary().getRawBody());
+        People people = People.parseFrom(Unirest.get("http://138.197.223.248:8080/protobuf/people").asBinary().getRawBody());
         long time = (new Date()).getTime() - start;
         System.out.println("protobuf took " + time + "ms to load " + people.getPersonList().size() + " people.");
         return time;
