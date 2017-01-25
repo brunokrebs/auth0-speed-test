@@ -23,7 +23,7 @@ public class SpeedTestApp {
 
     public static void main(String[] args) throws InvalidProtocolBufferException {
         final List<Person> peopleList = new ArrayList<>();
-        for (int i = 0; i < 5000; i++) {
+        for (int i = 0; i < 50000; i++) {
             final Address address1 = Address.newBuilder()
                     .setStreet("Street Number " + i)
                     .setNumber(i)
@@ -34,7 +34,7 @@ public class SpeedTestApp {
                     .setNumber(i)
                     .build();
 
-            Person person = Person.newBuilder()
+            final Person person = Person.newBuilder()
                     .setName("Person Number " + i)
                     .addMobile("111111" + i)
                     .addMobile("222222" + i)
