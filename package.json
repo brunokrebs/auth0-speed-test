@@ -6,7 +6,9 @@
   "dependencies": {
     "protobufjs": "^6.5.3"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "google-protobuf": "^3.1.1"
+  },
   "scripts": {
     "protobuf": "pbjs -t static-module -w commonjs -o ./src/main/resources/static/people.js ./src/main/resources/people.proto",
     "test": "echo \"Error: no test specified\" && exit 1"

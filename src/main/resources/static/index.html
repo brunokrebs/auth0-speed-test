@@ -40,14 +40,13 @@
         </div>
     </div>
 </div>
-<script src="https://cdn.rawgit.com/dcodeIO/protobuf.js/6.5.3/dist/protobuf.min.js"></script>
-<script src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.6.1/angular.min.js"></script>
 <script src="bundle.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.6.1/angular.min.js"></script>
 <script>
     (function() {
-        const People = protobuf.roots.default.demo.People;
-        const Person = protobuf.roots.default.demo.Person;
-        const Address = protobuf.roots.default.demo.Address;
+        const People = proto.demo.People;
+        const Person = proto.demo.Person;
+        const Address = proto.demo.Address;
         const peopleEndpoint = '/people';
         const protobufResp = 'arraybuffer';
         const octetStream = 'binary/octet-stream';
@@ -146,7 +145,7 @@
                         url: `/protobuf/${peopleEndpoint}`
                     };
                     return $http(req).then(function(response) {
-                        ctrl.people = People.decode(new Uint8Array(response.data)).person;
+                        ctrl.people = People.deserializeBinary(response.data);
                         recordTime(Date.now() - startTime, protobuRequest);
                     });
                 }
@@ -168,7 +167,6 @@
                     ctrl.time.forEach(time => {
                         let previousTime = totalTime;
                         totalTime += time;
-                        console.log(`${totalTime} = ${totalTime} + ${time}`);
                     });
                     console.log(`Took ${totalTime / NUMBER_OF_CALLS}ms to handle the request and response.`);
                     ctrl.time = [];

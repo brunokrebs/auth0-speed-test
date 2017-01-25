@@ -73,7 +73,11 @@ The command below generates protobuf files for Java and also Javascript. You wil
 you change the `./src/main/resources/people.proto` file or if you add new messages descriptions (new `.proto` files).
 
 ```bash
-protoc --java_out=./src/main/java/ \
-       --js_out=library=/src/main/resources/static/people,binary:. \
+protoc --js_out=import_style=commonjs,binary:. \
+       --java_out=./src/main/java/ \
        ./src/main/resources/people.proto
+```
+
+```bash
+browserify ./src/main/resources/people_pb.js -o ./src/main/resources/static/bundle.js
 ```
